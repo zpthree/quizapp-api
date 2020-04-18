@@ -1,0 +1,94 @@
+type Query {
+  allUsers: [User!]!
+  oneUser(username: String!): User!
+  allQuizzes: [Quiz!]!
+  oneQuiz(id: ID!): Quiz!
+  allQuestions: [Question!]!
+  oneQuestion(id: ID!): Question!
+}
+
+type Mutation {
+  # User
+  createUser(
+    name: String!
+    email: String!
+    username: String!
+    password: String!
+  ): User!
+  updateUser(id: ID!, name: String, email: String, username: String): User!
+  deleteUser(id: ID!): SuccessMessage!
+  # Quiz
+  createQuiz(
+    title: String!
+    description: String
+    featuredImage: String
+    questionCount: Int
+    attempts: Int
+    tags: [String]
+  ): Quiz!
+  updateQuiz(
+    id: ID!
+    title: String
+    description: String
+    featuredImage: String
+    questionCount: Int
+    attempts: Int
+    tags: [String]
+  ): Quiz!
+  deleteQuiz(id: ID!): SuccessMessage!
+  # Question
+  createQuestion(
+    question: String!
+    answers: [AnswerInput]!
+    answerCount: Int!
+    featuredImage: String
+  ): Question!
+  updateQuestion(
+    id: ID!
+    question: String
+    answers: [AnswerInput]
+    answerCount: Int
+    featuredImage: String
+  ): Question!
+  deleteQuestion(id: ID!): SuccessMessage!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  username: String!
+}
+
+type Quiz {
+  id: ID!
+  title: String!
+  description: String
+  featuredImage: String
+  questionCount: Int
+  attempts: Int
+  tags: [String]!
+}
+
+type Question {
+  id: ID!
+  question: String!
+  answers: [Answer!]!
+  answerCount: Int!
+  featuredImage: String
+}
+
+type Answer {
+  id: ID!
+  answer: String!
+  correct: Boolean!
+}
+
+input AnswerInput {
+  answer: String!
+  correct: Boolean!
+}
+
+type SuccessMessage {
+  message: String!
+}
