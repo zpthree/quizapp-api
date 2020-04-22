@@ -18,6 +18,16 @@ const QuizModel = new mongoose.Schema({
     type: Number,
   },
   tags: [{ type: String }],
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  questions: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Question',
+    },
+  ],
 });
 
 export default mongoose.model('Quiz', QuizModel);

@@ -24,6 +24,10 @@ const QuestionModel = new mongoose.Schema({
   featuredImage: {
     type: String,
   },
+  quiz: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Quiz',
+  },
 });
 
 export default mongoose.model('Question', QuestionModel);

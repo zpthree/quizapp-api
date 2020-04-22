@@ -5,6 +5,19 @@ const createQuestion = async (_, args, ctx) => {
     ...args,
   });
 
+  console.log(args);
+
+  // add new question to user Quiz's question reference
+  await ctx.models.Quiz.findByIdAndUpdate(
+    args.quiz,
+    {
+      $push: { questions: question.id },
+    },
+    { new: true }
+  );
+
+  console.log({ questions: question.id });
+
   return question.save();
 };
 

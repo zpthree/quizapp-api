@@ -42,6 +42,7 @@ type Mutation {
     answers: [AnswerInput]!
     answerCount: Int!
     featuredImage: String
+    quiz: ID!
   ): Question!
   updateQuestion(
     id: ID!
@@ -68,6 +69,8 @@ type Quiz {
   questionCount: Int
   attempts: Int
   tags: [String]!
+  user: User!
+  questions: [Question]!
 }
 
 type Question {
@@ -76,6 +79,7 @@ type Question {
   answers: [Answer!]!
   answerCount: Int!
   featuredImage: String
+  quiz: Quiz!
 }
 
 type Answer {

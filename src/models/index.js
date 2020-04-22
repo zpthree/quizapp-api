@@ -1,6 +1,6 @@
-import UserModel from './UserModel';
-import QuizModel from './QuizModel';
-import QuestionModel from './QuestionModel';
+import UserModel from 'models/UserModel';
+import QuizModel from 'models/QuizModel';
+import QuestionModel from 'models/QuestionModel';
 
 export default {
   User: UserModel,

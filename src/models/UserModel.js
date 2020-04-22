@@ -23,12 +23,6 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  // recipes: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: 'Recipe',
-  //   },
-  // ],
 });
 
 export default mongoose.model('User', UserSchema);

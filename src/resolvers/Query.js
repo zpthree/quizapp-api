@@ -14,14 +14,18 @@ const oneUser = async (_, args, ctx) => {
 // quizzes
 const allQuizzes = async (_, args, ctx) => {
   // TODO add error handling
-  const quizzes = ctx.models.Quiz.find({});
+  const quizzes = await ctx.models.Quiz.find({})
+    .populate('user')
+    .populate('question');
 
   return quizzes;
 };
 
 const oneQuiz = async (_, args, ctx) => {
   // TODO add error handling
-  const quiz = ctx.models.Quiz.findById(args.id);
+  const quiz = await ctx.models.Quiz.findById(args.id)
+    .populate('user')
+    .populate('questions');
 
   return quiz;
 };
@@ -29,14 +33,14 @@ const oneQuiz = async (_, args, ctx) => {
 // questions
 const allQuestions = async (_, args, ctx) => {
   // TODO add error handling
-  const questions = ctx.models.Question.find({});
+  const questions = await ctx.models.Question.find({}).populate('quiz');
 
   return questions;
 };
 
 const oneQuestion = async (_, args, ctx) => {
   // TODO add error handling
-  const question = ctx.models.Question.findById(args.id);
+  const question = await ctx.models.Question.findById(args.id).populate('quiz');
 
   return question;
 };
