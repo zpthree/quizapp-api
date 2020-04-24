@@ -23,6 +23,10 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  quizzes: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Quiz',
+  },
 });
 
 export default mongoose.model('User', UserSchema);

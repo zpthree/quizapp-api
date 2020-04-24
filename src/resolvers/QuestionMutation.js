@@ -1,6 +1,10 @@
 const createQuestion = async (_, args, ctx) => {
   // TODO add error handling
   // TODO make sure that there is only one correct answer
+  if (!args.quiz) {
+    throw Error('Unable to add question. Question not assigned to a quiz.');
+  }
+
   const question = await new ctx.models.Question({
     ...args,
   });

@@ -1,11 +1,13 @@
 // users
 const allUsers = async (_, args, ctx) => {
+  // TODO add error handling
   const users = await ctx.models.User.find({});
 
   return users;
 };
 
 const oneUser = async (_, args, ctx) => {
+  // TODO add error handling
   const user = await ctx.models.User.findOne({ username: args.username });
 
   return user;

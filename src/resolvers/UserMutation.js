@@ -31,8 +31,6 @@ const updateUser = async (_, args, ctx) => {
   //   );
   // }
 
-  console.log(args);
-
   if (!Object.keys(args).length) {
     throw Error("There's nothing to change.");
   }
@@ -61,6 +59,40 @@ const updateUser = async (_, args, ctx) => {
   return user;
 };
 
+const updatePassword = async (_, args, ctx) => {
+  const user = await ctx.models.User.findOne({ username: args.username });
+
+  // validate passwords
+  if (args.password !== args.confirmPassword) {
+    throw Error("Passwords don't match");
+  }
+
+  const oldPasswordMatches = await bcrypt.compare(
+    args.oldPassword,
+    user.password
+  );
+
+  if (!oldPasswordMatches) {
+    throw new Error('Old password is incorrect.');
+  }
+
+  // update password
+  const password = await bcrypt.hash(args.password, 10);
+  let updatedUser;
+
+  try {
+    updatedUser = await ctx.models.User.findOneAndUpdate(
+      { username: args.username },
+      { password },
+      { new: true, runValidators: true }
+    );
+  } catch (err) {
+    throw Error('Password could not be updated.');
+  }
+
+  return updatedUser;
+};
+
 const deleteUser = async (_, args, ctx) => {
   let user;
   if (!args.id) {
@@ -83,4 +115,4 @@ const deleteUser = async (_, args, ctx) => {
   return { message: `${user.name} has been successfully deleted!` };
 };
 
-export default { createUser, updateUser, deleteUser };
+export default { createUser, updateUser, updatePassword, deleteUser };

@@ -16,6 +16,12 @@ type Mutation {
     password: String!
   ): User!
   updateUser(id: ID!, name: String, email: String, username: String): User!
+  updatePassword(
+    username: String!
+    password: String!
+    confirmPassword: String!
+    oldPassword: String!
+  ): User!
   deleteUser(id: ID!): SuccessMessage!
   # Quiz
   createQuiz(
@@ -68,9 +74,9 @@ type Quiz {
   featuredImage: String
   questionCount: Int
   attempts: Int
-  tags: [String]!
+  tags: [String]
   user: User!
-  questions: [Question]!
+  questions: [Question]
 }
 
 type Question {

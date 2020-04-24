@@ -3,7 +3,7 @@ const createQuiz = async (_, args, ctx) => {
   // TODO add featured image, attempts, tags, tags
   // TODO don't allow featured images w/ explicit content
   // TODO get logged in user and add to quiz
-  const tempUser = '5e8bc40e3cbcd2dc89c28249';
+  const tempUser = '5ea362bd1d414ceff6dc7c3a';
 
   const quiz = await new ctx.models.Quiz({
     ...args,
