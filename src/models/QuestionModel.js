@@ -24,6 +24,9 @@ const QuestionModel = new mongoose.Schema({
   featuredImage: {
     type: String,
   },
+  explanation: {
+    type: String,
+  },
   quiz: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Quiz',

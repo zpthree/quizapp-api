@@ -1,12 +1,13 @@
-module.exports = function checkUniqueValues(model, values) {
+export default function checkUniqueValues(model, values) {
   let i = 0;
 
   return new Promise((resolve, reject) => {
     // loop over values
     values.forEach(async data => {
-      const [key, value] = data;
+      const key = Object.entries(data)[0][0];
+      const value = Object.entries(data)[0][1];
 
-      if (data.length) {
+      if (value) {
         // query the database for provided value
         const exists = await model.findOne({ [key]: value });
 
@@ -20,4 +21,4 @@ module.exports = function checkUniqueValues(model, values) {
       if (i === values.length) resolve();
     });
   });
-};
+}

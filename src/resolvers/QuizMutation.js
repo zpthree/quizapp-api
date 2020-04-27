@@ -1,4 +1,4 @@
-const createQuiz = async (_, args, ctx) => {
+async function createQuiz(_, args, ctx) {
   // TODO add error handling
   // TODO add featured image, attempts, tags, tags
   // TODO don't allow featured images w/ explicit content
@@ -13,9 +13,9 @@ const createQuiz = async (_, args, ctx) => {
   console.log(quiz);
 
   return quiz.save();
-};
+}
 
-const updateQuiz = async (_, args, ctx) => {
+async function updateQuiz(_, args, ctx) {
   // TODO add error handling
   const quiz = ctx.models.Quiz.findByIdAndUpdate(
     args.id,
@@ -24,13 +24,13 @@ const updateQuiz = async (_, args, ctx) => {
   );
 
   return quiz;
-};
+}
 
-const deleteQuiz = async (_, args, ctx) => {
+async function deleteQuiz(_, args, ctx) {
   // TODO add error handling
   const quiz = await ctx.models.Quiz.findByIdAndDelete(args.id);
 
   return { message: `"${quiz.title}" has been deleted.` };
-};
+}
 
 export default { createQuiz, updateQuiz, deleteQuiz };

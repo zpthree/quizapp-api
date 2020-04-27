@@ -1,51 +1,106 @@
+import shuffleArray from 'utils/shuffleArray';
+
 // users
-const allUsers = async (_, args, ctx) => {
+async function allUsers(_, args, ctx) {
   // TODO add error handling
   const users = await ctx.models.User.find({});
 
   return users;
-};
+}
 
-const oneUser = async (_, args, ctx) => {
+async function oneUser(_, args, ctx) {
   // TODO add error handling
   const user = await ctx.models.User.findOne({ username: args.username });
 
   return user;
-};
+}
 
 // quizzes
-const allQuizzes = async (_, args, ctx) => {
+async function allQuizzes(_, args, ctx) {
   // TODO add error handling
   const quizzes = await ctx.models.Quiz.find({})
     .populate('user')
     .populate('question');
 
   return quizzes;
-};
+}
 
-const oneQuiz = async (_, args, ctx) => {
+async function oneQuiz(_, args, ctx) {
   // TODO add error handling
   const quiz = await ctx.models.Quiz.findById(args.id)
     .populate('user')
     .populate('questions');
 
   return quiz;
-};
+}
 
 // questions
-const allQuestions = async (_, args, ctx) => {
+async function allQuestions(_, args, ctx) {
   // TODO add error handling
-  const questions = await ctx.models.Question.find({}).populate('quiz');
+  const questions = await ctx.models.Question.find({}).populate({
+    path: 'quiz',
+    populate: 'user',
+  });
 
   return questions;
-};
+}
 
-const oneQuestion = async (_, args, ctx) => {
+async function oneQuestion(_, args, ctx) {
   // TODO add error handling
-  const question = await ctx.models.Question.findById(args.id).populate('quiz');
+  const question = await ctx.models.Question.findById(args.id).populate({
+    path: 'quiz',
+    populate: 'user',
+  });
 
-  return question;
-};
+  if (!question) {
+    throw Error('The question you are looking for could not be found.');
+  }
+
+  const { answers } = question;
+  const correctAnswer = answers.find(answer => answer.correct === true);
+
+  let newAnswers = [correctAnswer];
+
+  shuffleArray(answers).every(answer => {
+    if (answer.correct === true) {
+      return true;
+    }
+
+    if (newAnswers.length >= question.answerCount) {
+      return false;
+    }
+
+    return (newAnswers = [...newAnswers, answer]);
+  });
+
+  return {
+    ...question._doc,
+    id: question.id,
+    answers: shuffleArray(newAnswers),
+  };
+}
+
+async function checkAnswer(_, args, ctx) {
+  const question = await ctx.models.Question.findById(args.id);
+
+  if (!question) {
+    throw Error('Question not found.');
+  }
+
+  try {
+    const { correct } = question.answers.find(
+      answer => answer.id === args.answer
+    );
+
+    if (!correct) {
+      return { message: 'Answer is incorrect.' };
+    }
+
+    return { message: 'Answer is correct!' };
+  } catch (err) {
+    throw Error('There was a problem checking this answer.');
+  }
+}
 
 export default {
   allUsers,
@@ -54,4 +109,5 @@ export default {
   oneQuiz,
   allQuestions,
   oneQuestion,
+  checkAnswer,
 };

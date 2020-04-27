@@ -2,9 +2,9 @@ import express from 'express';
 import server from 'server';
 import connectDB from 'db';
 
-require('dotenv').config();
+// require('dotenv').config();
 
-const startServer = async () => {
+async function startServer() {
   const app = express();
 
   await connectDB();
@@ -14,6 +14,6 @@ const startServer = async () => {
   app.listen({ port: 4000 }, () =>
     console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
   );
-};
+}
 
 startServer();

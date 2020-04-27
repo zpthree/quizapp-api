@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import checkUnique from 'utils/checkUniqueValues';
 
-const createUser = async (_, args, ctx) => {
+async function createUser(_, args, ctx) {
   const password = await bcrypt.hash(args.password, 10);
 
   args.email = args.email.toLowerCase();
@@ -21,10 +21,11 @@ const createUser = async (_, args, ctx) => {
   // });
 
   return user.save();
-};
+}
 
-const updateUser = async (_, args, ctx) => {
+async function updateUser(_, args, ctx) {
   let user;
+  const { email, username } = args;
   // if (!ctx.request.userId) {
   //   throw Error(
   //     'You do not have permission to update this user. Make sure you are signed in.'
@@ -35,10 +36,7 @@ const updateUser = async (_, args, ctx) => {
     throw Error("There's nothing to change.");
   }
 
-  await checkUnique(ctx.models.User, [
-    args.email ? ['email', args.email] : [],
-    args.username ? ['username', args.username] : [],
-  ]);
+  await checkUnique(ctx.models.User, [{ email }, { username }]);
 
   try {
     user = await ctx.models.User.findByIdAndUpdate(
@@ -57,9 +55,9 @@ const updateUser = async (_, args, ctx) => {
   }
 
   return user;
-};
+}
 
-const updatePassword = async (_, args, ctx) => {
+async function updatePassword(_, args, ctx) {
   const user = await ctx.models.User.findOne({ username: args.username });
 
   // validate passwords
@@ -91,9 +89,9 @@ const updatePassword = async (_, args, ctx) => {
   }
 
   return updatedUser;
-};
+}
 
-const deleteUser = async (_, args, ctx) => {
+async function deleteUser(_, args, ctx) {
   let user;
   if (!args.id) {
     throw Error('Unable to delete user. No user given.');
@@ -113,6 +111,6 @@ const deleteUser = async (_, args, ctx) => {
   }
 
   return { message: `${user.name} has been successfully deleted!` };
-};
+}
 
 export default { createUser, updateUser, updatePassword, deleteUser };
