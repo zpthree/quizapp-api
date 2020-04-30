@@ -88,15 +88,15 @@ async function checkAnswer(_, args, ctx) {
   }
 
   try {
-    const { correct } = question.answers.find(
-      answer => answer.id === args.answer
+    const correctAnswer = question.answers.find(
+      answer => answer.correct === true
     );
 
-    if (!correct) {
-      return { message: 'Answer is incorrect.' };
+    if (args.answer !== correctAnswer.id) {
+      return { correctAnswer, message: 'Answer is incorrect.' };
     }
 
-    return { message: 'Answer is correct!' };
+    return { correctAnswer, message: 'Answer is correct!' };
   } catch (err) {
     throw Error('There was a problem checking this answer.');
   }
