@@ -90,6 +90,8 @@ type Question {
   answerCount: Int!
   explanation: String
   featuredImage: String
+  prevQuestion: ID
+  nextQuestion: ID
   quiz: Quiz!
 }
 
