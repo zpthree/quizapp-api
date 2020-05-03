@@ -1,16 +1,30 @@
+import slugify from 'slugify';
+
 async function createQuiz(_, args, ctx) {
   // TODO add error handling
   // TODO add featured image, attempts, tags, tags
   // TODO don't allow featured images w/ explicit content
+
   // TODO get logged in user and add to quiz
   const tempUser = '5ea362bd1d414ceff6dc7c3a';
+
+  const slug = slugify(args.title, {
+    remove: undefined,
+    lower: true,
+  });
+
+  // check if slug exists
+  const [slugExists] = await ctx.models.Quiz.find({ slug });
+
+  if (slugExists) {
+    throw Error('Slug alread exists.');
+  }
 
   const quiz = await new ctx.models.Quiz({
     ...args,
     user: tempUser,
+    slug,
   });
-
-  console.log(quiz);
 
   return quiz.save();
 }

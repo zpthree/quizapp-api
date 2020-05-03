@@ -27,11 +27,21 @@ async function allQuizzes(_, args, ctx) {
 
 async function oneQuiz(_, args, ctx) {
   // TODO add error handling
-  const quiz = await ctx.models.Quiz.findById(args.id)
+  const quiz = await ctx.models.Quiz.findOne({ slug: args.slug })
     .populate('user')
     .populate('questions');
 
   return quiz;
+}
+
+export async function checkQuizSlug(_, args, ctx) {
+  const [slugExists] = await ctx.models.Quiz.find({ slug: args.slug });
+
+  if (slugExists) {
+    throw Error('Slug is already being used by another quiz.');
+  }
+
+  return { message: 'Slug is available.' };
 }
 
 // questions
@@ -66,9 +76,9 @@ async function oneQuestion(_, args, ctx) {
       return true;
     }
 
-    if (newAnswers.length >= question.answerCount) {
-      return false;
-    }
+    // if (newAnswers.length >= question.answerCount) {
+    //   return false;
+    // }
 
     return (newAnswers = [...newAnswers, answer]);
   });
@@ -81,7 +91,7 @@ async function oneQuestion(_, args, ctx) {
 }
 
 async function checkAnswer(_, args, ctx) {
-  const question = await ctx.models.Question.findById(args.id);
+  const question = await ctx.models.Question.findById(args.questionId);
 
   if (!question) {
     throw Error('Question not found.');
@@ -92,7 +102,7 @@ async function checkAnswer(_, args, ctx) {
       answer => answer.correct === true
     );
 
-    if (args.answer !== correctAnswer.id) {
+    if (args.answerId !== correctAnswer.id) {
       return { correctAnswer, message: 'Answer is incorrect.' };
     }
 
@@ -107,6 +117,7 @@ export default {
   oneUser,
   allQuizzes,
   oneQuiz,
+  checkQuizSlug,
   allQuestions,
   oneQuestion,
   checkAnswer,

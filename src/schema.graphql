@@ -2,10 +2,11 @@ type Query {
   allUsers: [User!]!
   oneUser(username: String!): User!
   allQuizzes: [Quiz!]!
-  oneQuiz(id: ID!): Quiz!
+  oneQuiz(slug: String!): Quiz!
+  checkQuizSlug(slug: String!): ResponseMessage!
   allQuestions: [Question!]!
   oneQuestion(id: ID!): Question!
-  checkAnswer(id: ID!, answer: ID!): AnswerMessage!
+  checkAnswer(questionId: ID!, answerId: ID): AnswerMessage!
 }
 
 type Mutation {
@@ -23,7 +24,7 @@ type Mutation {
     confirmPassword: String!
     oldPassword: String!
   ): User!
-  deleteUser(id: ID!): SuccessMessage!
+  deleteUser(id: ID!): ResponseMessage!
   # Quiz
   createQuiz(
     title: String!
@@ -42,7 +43,7 @@ type Mutation {
     attempts: Int
     tags: [String]
   ): Quiz!
-  deleteQuiz(id: ID!): SuccessMessage!
+  deleteQuiz(id: ID!): ResponseMessage!
   # Question
   createQuestion(
     question: String!
@@ -59,7 +60,7 @@ type Mutation {
     answerCount: Int
     featuredImage: String
   ): Question!
-  deleteQuestion(id: ID!): SuccessMessage!
+  deleteQuestion(id: ID!): ResponseMessage!
 }
 
 type User {
@@ -72,6 +73,7 @@ type User {
 type Quiz {
   id: ID!
   title: String!
+  slug: String!
   description: String
   featuredImage: String
   questionCount: Int
@@ -107,6 +109,6 @@ type AnswerMessage {
   message: String!
 }
 
-type SuccessMessage {
+type ResponseMessage {
   message: String!
 }
