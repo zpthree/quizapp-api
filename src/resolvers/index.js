@@ -1,9 +1,9 @@
-import UserMutation from 'resolvers/UserMutation';
-import QuizMutation from 'resolvers/QuizMutation';
-import QuestionMutation from 'resolvers/QuestionMutation';
-import Query from 'resolvers/Query';
+const UserMutation = require('./UserMutation');
+const QuizMutation = require('./QuizMutation');
+const QuestionMutation = require('./QuestionMutation');
+const Query = require('./Query');
 
-export default {
+module.exports = {
   Query,
   Mutation: { ...UserMutation, ...QuizMutation, ...QuestionMutation },
 };

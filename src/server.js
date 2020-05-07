@@ -1,15 +1,14 @@
-import { ApolloServer } from 'apollo-server-express';
-import { importSchema } from 'graphql-import';
-import resolvers from 'resolvers';
-import models from 'models';
-import db from 'db';
+const { ApolloServer } = require('apollo-server-express');
+const { importSchema } = require('graphql-import');
+const resolvers = require('./resolvers');
+const models = require('./models');
 
 const typeDefs = importSchema(`src/schema.graphql`);
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: req => ({ ...req, db, models }),
+  context: req => ({ ...req, models }),
 });
 
-export default server;
+module.exports = server;

@@ -13,4 +13,4 @@ function connectDB() {
   });
 }
 
-export default connectDB;
+module.exports = connectDB;

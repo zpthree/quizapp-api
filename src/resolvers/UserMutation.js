@@ -1,5 +1,6 @@
-import bcrypt from 'bcryptjs';
-import checkUnique from 'utils/checkUniqueValues';
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const checkUnique = require('../utils/checkUniqueValues');
 
 async function createUser(_, args, ctx) {
   const password = await bcrypt.hash(args.password, 10);
@@ -13,12 +14,12 @@ async function createUser(_, args, ctx) {
   });
 
   // * TODO set cookie
-  // const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
+  const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
 
-  // ctx.response.cookie('token', token, {
-  //   httpOnly: true,
-  //   maxAge: 1000 * 60 * 60 * 24 * 365,
-  // });
+  ctx.response.cookie('token', token, {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+  });
 
   return user.save();
 }
@@ -113,4 +114,4 @@ async function deleteUser(_, args, ctx) {
   return { message: `${user.name} has been successfully deleted!` };
 }
 
-export default { createUser, updateUser, updatePassword, deleteUser };
+module.exports = { createUser, updateUser, updatePassword, deleteUser };

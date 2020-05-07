@@ -1,4 +1,4 @@
-export default function checkUniqueValues(model, values) {
+module.exports = function checkUniqueValues(model, values) {
   let i = 0;
 
   return new Promise((resolve, reject) => {
@@ -21,4 +21,4 @@ export default function checkUniqueValues(model, values) {
       if (i === values.length) resolve();
     });
   });
-}
+};

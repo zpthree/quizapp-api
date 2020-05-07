@@ -4,18 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon -e js,graphql -x babel-node src/index.js"
+    "start": "nodemon -e js,graphql -x node src/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "apollo-server-express": "^2.11.0",
     "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
     "eslint-import-resolver-babel-module": "^5.1.2",
     "express": "^4.17.1",
     "graphql": "^15.0.0",
     "graphql-import": "^1.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "lodash.keyby": "^4.6.0",
     "mongoose": "^5.9.7",
     "slugify": "^1.4.0"
   },

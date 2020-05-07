@@ -1,9 +1,23 @@
-import express from 'express';
-import server from 'server';
-import connectDB from 'db';
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const server = require('./server');
+const connectDB = require('./db');
 
 async function startServer() {
   const app = express();
+
+  app.use(cookieParser());
+
+  app.use((req, res, next) => {
+    const { theme, token, activeQuiz, ...questions } = req.cookies;
+
+    req.theme = theme || null;
+    req.token = token || null;
+    req.activeQuiz = activeQuiz || null;
+    req.questions = questions || null;
+
+    next();
+  });
 
   await connectDB();
 

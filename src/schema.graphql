@@ -7,6 +7,7 @@ type Query {
   allQuestions: [Question!]!
   oneQuestion(id: ID!): Question!
   checkAnswer(questionId: ID!, answerId: ID): AnswerMessage!
+  answeredQuestions: [Question!]!
 }
 
 type Mutation {
@@ -34,6 +35,7 @@ type Mutation {
     attempts: Int
     tags: [String]
   ): Quiz!
+  takeQuiz(id: ID!): Quiz!
   updateQuiz(
     id: ID!
     title: String
@@ -53,6 +55,7 @@ type Mutation {
     explanation: String
     quiz: ID!
   ): Question!
+  answerQuestion(questionId: ID!, answerId: ID!): ResponseMessage!
   updateQuestion(
     id: ID!
     question: String
@@ -90,6 +93,7 @@ type Question {
   answerCount: Int!
   explanation: String
   featuredImage: String
+  answerId: ID
   prevQuestion: ID
   nextQuestion: ID
   quiz: Quiz!

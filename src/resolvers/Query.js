@@ -1,4 +1,5 @@
-import shuffleArray from 'utils/shuffleArray';
+const keyBy = require('lodash.keyby');
+const shuffleArray = require('../utils/shuffleArray');
 
 // users
 async function allUsers(_, args, ctx) {
@@ -34,7 +35,7 @@ async function oneQuiz(_, args, ctx) {
   return quiz;
 }
 
-export async function checkQuizSlug(_, args, ctx) {
+async function checkQuizSlug(_, args, ctx) {
   const [slugExists] = await ctx.models.Quiz.find({ slug: args.slug });
 
   if (slugExists) {
@@ -53,6 +54,25 @@ async function allQuestions(_, args, ctx) {
   });
 
   return questions;
+}
+
+async function answeredQuestions(_, args, ctx) {
+  const questionKeys = Object.keys(ctx.res.req.questions);
+
+  const questions = await ctx.models.Question.find()
+    .where('_id')
+    .in(questionKeys)
+    .populate('quiz');
+
+  const newQuestions = [
+    ...questions.map(question => ({
+      ...question._doc,
+      id: question.id,
+      answerId: ctx.res.req.questions[question.id],
+    })),
+  ];
+
+  return newQuestions;
 }
 
 async function oneQuestion(_, args, ctx) {
@@ -112,13 +132,14 @@ async function checkAnswer(_, args, ctx) {
   }
 }
 
-export default {
+module.exports = {
   allUsers,
   oneUser,
   allQuizzes,
   oneQuiz,
   checkQuizSlug,
   allQuestions,
+  answeredQuestions,
   oneQuestion,
   checkAnswer,
 };

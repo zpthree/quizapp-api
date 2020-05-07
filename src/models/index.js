@@ -1,8 +1,8 @@
-import UserModel from 'models/UserModel';
-import QuizModel from 'models/QuizModel';
-import QuestionModel from 'models/QuestionModel';
+const UserModel = require('./UserModel');
+const QuizModel = require('./QuizModel');
+const QuestionModel = require('./QuestionModel');
 
-export default {
+module.exports = {
   User: UserModel,
   Quiz: QuizModel,
   Question: QuestionModel,

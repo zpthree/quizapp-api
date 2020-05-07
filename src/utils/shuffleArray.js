@@ -1,4 +1,4 @@
-export default function shuffleArray(array) {
+module.exports = function shuffleArray(array) {
   const oldArray = [...array];
   const newArray = [];
 
@@ -10,4 +10,4 @@ export default function shuffleArray(array) {
   }
 
   return newArray;
-}
+};

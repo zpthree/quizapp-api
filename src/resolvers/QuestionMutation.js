@@ -9,8 +9,6 @@ async function createQuestion(_, args, ctx) {
     ...args,
   });
 
-  console.log(args);
-
   // add new question to user Quiz's question reference
   await ctx.models.Quiz.findByIdAndUpdate(
     args.quiz,
@@ -20,9 +18,34 @@ async function createQuestion(_, args, ctx) {
     { new: true }
   );
 
-  console.log({ questions: question.id });
-
   return question.save();
+}
+
+async function answerQuestion(_, args, ctx) {
+  if (!args.questionId || !args.answerId) {
+    throw Error('Unable to answer question.');
+  }
+
+  const question = await ctx.models.Question.findById(args.questionId);
+
+  if (!question) {
+    throw Error("Question doesn't exist 🙁.");
+  }
+
+  const answerExists = question.answers.filter(
+    answer => answer.id === args.answerId
+  );
+
+  if (!answerExists) {
+    throw Error("Answer doesn't exist 🙁.");
+  }
+
+  ctx.res.cookie(args.questionId, args.answerId, {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  });
+
+  return { message: 'Answered Question.' };
 }
 
 async function updateQuestion(_, args, ctx) {
@@ -44,4 +67,9 @@ async function deleteQuestion(_, args, ctx) {
   return { message: `"${question.question}" has been deleted.` };
 }
 
-export default { createQuestion, updateQuestion, deleteQuestion };
+module.exports = {
+  createQuestion,
+  answerQuestion,
+  updateQuestion,
+  deleteQuestion,
+};
