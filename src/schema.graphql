@@ -7,10 +7,11 @@ type Query {
   allQuestions: [Question!]!
   oneQuestion(id: ID!): Question!
   checkAnswer(questionId: ID!, answerId: ID): AnswerMessage!
-  answeredQuestions: [Question!]!
+  appData: AppData!
 }
 
 type Mutation {
+  toggleTheme(theme: String!): ResponseMessage!
   # User
   createUser(
     name: String!
@@ -113,6 +114,15 @@ input AnswerInput {
 type AnswerMessage {
   correctAnswer: Answer!
   message: String!
+}
+
+type AppData {
+  theme: String
+  activeUser: User
+  activeQuiz: String
+  activeQuizTitle: String
+  answeredQuestions: [Question]
+  remainingQuestions: [Question]
 }
 
 type ResponseMessage {

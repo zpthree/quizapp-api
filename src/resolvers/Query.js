@@ -1,5 +1,47 @@
-const keyBy = require('lodash.keyby');
 const shuffleArray = require('../utils/shuffleArray');
+
+async function appData(_, args, ctx) {
+  const questionKeys = Object.keys(ctx.res.req.questions);
+  const { theme, activeQuiz } = ctx.res.req;
+  let answeredQuestions;
+  let activeQuizId;
+  let activeQuizTitle;
+
+  if (activeQuiz) {
+    const quiz = await ctx.models.Quiz.findOne({ slug: activeQuiz });
+    activeQuizTitle = quiz.title;
+    activeQuizId = quiz.id;
+  }
+
+  const questions = await ctx.models.Question.find()
+    .where('_id')
+    .in(questionKeys)
+    .populate('quiz');
+
+  const remainingQuestions = await ctx.models.Question.find({
+    quiz: activeQuizId,
+  })
+    .where('_id')
+    .nin(questionKeys);
+
+  if (questions && questions[0]) {
+    answeredQuestions = [
+      ...questions.map(question => ({
+        ...question._doc,
+        id: question.id,
+        answerId: ctx.res.req.questions[question.id],
+      })),
+    ];
+  }
+
+  return {
+    theme,
+    activeQuiz,
+    activeQuizTitle,
+    answeredQuestions,
+    remainingQuestions,
+  };
+}
 
 // users
 async function allUsers(_, args, ctx) {
@@ -54,25 +96,6 @@ async function allQuestions(_, args, ctx) {
   });
 
   return questions;
-}
-
-async function answeredQuestions(_, args, ctx) {
-  const questionKeys = Object.keys(ctx.res.req.questions);
-
-  const questions = await ctx.models.Question.find()
-    .where('_id')
-    .in(questionKeys)
-    .populate('quiz');
-
-  const newQuestions = [
-    ...questions.map(question => ({
-      ...question._doc,
-      id: question.id,
-      answerId: ctx.res.req.questions[question.id],
-    })),
-  ];
-
-  return newQuestions;
 }
 
 async function oneQuestion(_, args, ctx) {
@@ -133,13 +156,13 @@ async function checkAnswer(_, args, ctx) {
 }
 
 module.exports = {
+  appData,
   allUsers,
   oneUser,
   allQuizzes,
   oneQuiz,
   checkQuizSlug,
   allQuestions,
-  answeredQuestions,
   oneQuestion,
   checkAnswer,
 };

@@ -34,27 +34,16 @@ async function takeQuiz(_, args, ctx) {
     throw Error('Unable to start the quiz.');
   }
 
-  const { activeQuiz } = ctx.res.req;
-
   const quiz = await ctx.models.Quiz.findById(args.id)
     .populate('user')
     .populate('questions');
 
-  if (!quiz) {
-    throw Error("Quiz doesn't exist");
-  }
-
-  if (activeQuiz && activeQuiz === quiz.slug) {
-    throw Error('Quiz is already active.');
-  }
-
-  if (activeQuiz && activeQuiz !== quiz.slug) {
-    return ctx.models.Quiz.findOne({ slug: activeQuiz });
-  }
+  // TODO remove cookies for old quiz
 
   ctx.res.cookie('activeQuiz', quiz.slug, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7,
+    sameSite: 'Lax',
   });
 
   return quiz;

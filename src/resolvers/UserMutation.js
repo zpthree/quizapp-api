@@ -2,6 +2,18 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const checkUnique = require('../utils/checkUniqueValues');
 
+async function toggleTheme(_, args, ctx) {
+  const { theme } = args;
+
+  ctx.res.cookie('theme', theme, {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+    sameSite: 'Lax',
+  });
+
+  return { message: `Theme set to ${theme}.` };
+}
+
 async function createUser(_, args, ctx) {
   const password = await bcrypt.hash(args.password, 10);
 
@@ -16,7 +28,7 @@ async function createUser(_, args, ctx) {
   // * TODO set cookie
   const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
 
-  ctx.response.cookie('token', token, {
+  ctx.res.cookie('token', token, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 365,
   });
@@ -114,4 +126,10 @@ async function deleteUser(_, args, ctx) {
   return { message: `${user.name} has been successfully deleted!` };
 }
 
-module.exports = { createUser, updateUser, updatePassword, deleteUser };
+module.exports = {
+  toggleTheme,
+  createUser,
+  updateUser,
+  updatePassword,
+  deleteUser,
+};

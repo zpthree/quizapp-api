@@ -43,6 +43,7 @@ async function answerQuestion(_, args, ctx) {
   ctx.res.cookie(args.questionId, args.answerId, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7,
+    sameSite: 'Lax',
   });
 
   return { message: 'Answered Question.' };
