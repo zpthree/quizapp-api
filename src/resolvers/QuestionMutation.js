@@ -5,6 +5,14 @@ async function createQuestion(_, args, ctx) {
     throw Error('Unable to add question. Question not assigned to a quiz.');
   }
 
+  const { questions } = await ctx.models.Quiz.findById(args.quiz).populate(
+    'questions'
+  );
+
+  if (questions.length) {
+    throw Error('25 question limit reached for this quiz.');
+  }
+
   const question = await new ctx.models.Question({
     ...args,
   });

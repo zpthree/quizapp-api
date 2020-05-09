@@ -38,12 +38,22 @@ async function takeQuiz(_, args, ctx) {
     .populate('user')
     .populate('questions');
 
-  // TODO remove cookies for old quiz
+  // remove cookies for old quiz
+  Object.keys(ctx.res.req.cookies).every(coookie => {
+    if (coookie !== 'token' && coookie !== 'theme') {
+      ctx.res.cookie(coookie, null, {
+        httpOnly: true,
+        maxAge: 0,
+        sameSite: 'lax',
+      });
+    }
+    return true;
+  });
 
   ctx.res.cookie('activeQuiz', quiz.slug, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7,
-    sameSite: 'Lax',
+    sameSite: 'lax',
   });
 
   return quiz;
@@ -67,4 +77,23 @@ async function deleteQuiz(_, args, ctx) {
   return { message: `"${quiz.title}" has been deleted.` };
 }
 
-module.exports = { createQuiz, takeQuiz, updateQuiz, deleteQuiz };
+async function getQuizResults(_, args, ctx) {
+  if (!args.slug) {
+    return { message: 'Unable to turn in quiz.' };
+  }
+  ctx.res.cookie('finalized', args.slug, {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    sameSite: 'lax',
+  });
+
+  return { message: 'Quiz has been turned in.' };
+}
+
+module.exports = {
+  createQuiz,
+  takeQuiz,
+  updateQuiz,
+  deleteQuiz,
+  getQuizResults,
+};

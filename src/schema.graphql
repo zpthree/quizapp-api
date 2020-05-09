@@ -47,11 +47,12 @@ type Mutation {
     tags: [String]
   ): Quiz!
   deleteQuiz(id: ID!): ResponseMessage!
+  getQuizResults(slug: String): ResponseMessage!
   # Question
   createQuestion(
     question: String!
     answers: [AnswerInput]!
-    answerCount: Int!
+    answerCount: Int
     featuredImage: String
     explanation: String
     quiz: ID!
@@ -91,12 +92,10 @@ type Question {
   id: ID!
   question: String!
   answers: [Answer!]!
-  answerCount: Int!
+  answerCount: Int
   explanation: String
   featuredImage: String
   answerId: ID
-  prevQuestion: ID
-  nextQuestion: ID
   quiz: Quiz!
 }
 
@@ -120,6 +119,7 @@ type AppData {
   theme: String
   activeUser: User
   activeQuiz: String
+  finalized: String
   activeQuizTitle: String
   answeredQuestions: [Question]
   remainingQuestions: [Question]

@@ -2,7 +2,7 @@ const shuffleArray = require('../utils/shuffleArray');
 
 async function appData(_, args, ctx) {
   const questionKeys = Object.keys(ctx.res.req.questions);
-  const { theme, activeQuiz } = ctx.res.req;
+  const { theme, finalized, activeQuiz } = ctx.res.req;
   let answeredQuestions;
   let activeQuizId;
   let activeQuizTitle;
@@ -37,6 +37,7 @@ async function appData(_, args, ctx) {
   return {
     theme,
     activeQuiz,
+    finalized,
     activeQuizTitle,
     answeredQuestions,
     remainingQuestions,

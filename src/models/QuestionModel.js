@@ -19,7 +19,6 @@ const QuestionModel = new mongoose.Schema({
   ],
   answerCount: {
     type: Number,
-    required: true,
   },
   featuredImage: {
     type: String,

@@ -9,10 +9,11 @@ async function startServer() {
   app.use(cookieParser());
 
   app.use((req, res, next) => {
-    const { theme, token, activeQuiz, ...questions } = req.cookies;
+    const { theme, token, activeQuiz, finalized, ...questions } = req.cookies;
 
     req.theme = theme || null;
     req.token = token || null;
+    req.finalized = finalized || null;
     req.activeQuiz = activeQuiz || null;
     req.questions = questions || null;
 
