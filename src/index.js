@@ -33,6 +33,14 @@ async function startServer() {
   app.listen({ port: 4000 }, () =>
     console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
   );
+
+  app.get('/', (req, res, next) => {
+    res.sendFile(`${__dirname}/views/welcome.html`);
+  });
+
+  app.get('/main.css', (req, res, next) => {
+    res.sendFile(`${__dirname}/views/main.css`);
+  });
 }
 
 startServer();
