@@ -8,7 +8,7 @@ async function toggleTheme(_, args, ctx) {
   ctx.res.cookie('theme', theme, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 365,
-    sameSite: 'none,
+    sameSite: 'none',
   });
 
   return { message: `Theme set to ${theme}.` };
@@ -40,7 +40,7 @@ async function createUser(_, args, ctx) {
   ctx.res.cookie('token', token, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 90,
-    sameSite: 'none,
+    sameSite: 'none',
   });
 
   return user.save();
@@ -69,7 +69,7 @@ async function signIn(_, args, ctx) {
   ctx.res.cookie('token', token, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 90,
-    sameSite: 'none,
+    sameSite: 'none',
   });
 
   return user;

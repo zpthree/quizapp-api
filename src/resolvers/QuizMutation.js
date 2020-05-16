@@ -45,7 +45,7 @@ async function takeQuiz(_, args, ctx) {
       ctx.res.cookie(coookie, null, {
         httpOnly: true,
         maxAge: 0,
-        sameSite: 'none,
+        sameSite: 'none',
       });
     }
     return true;
@@ -54,7 +54,7 @@ async function takeQuiz(_, args, ctx) {
   ctx.res.cookie('activeQuiz', quiz.slug, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7,
-    sameSite: 'none,
+    sameSite: 'none',
   });
 
   return quiz;
@@ -85,7 +85,7 @@ async function getQuizResults(_, args, ctx) {
   ctx.res.cookie('finalized', args.slug, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7,
-    sameSite: 'none,
+    sameSite: 'none',
   });
 
   return { message: 'Quiz has been turned in.' };
