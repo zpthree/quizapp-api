@@ -1,6 +1,7 @@
 async function createQuestion(_, args, ctx) {
   // TODO add error handling
   // TODO make sure that there is only one correct answer
+  // TODO make sure user owns quiz they are adding questions to
   if (!args.quiz) {
     throw Error('Unable to add question. Question not assigned to a quiz.');
   }
@@ -9,7 +10,7 @@ async function createQuestion(_, args, ctx) {
     'questions'
   );
 
-  if (questions.length) {
+  if (questions.length >= 25) {
     throw Error('25 question limit reached for this quiz.');
   }
 
@@ -51,7 +52,7 @@ async function answerQuestion(_, args, ctx) {
   ctx.res.cookie(args.questionId, args.answerId, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7,
-    sameSite: 'Lax',
+    sameSite: 'lax',
   });
 
   return { message: 'Answered Question.' };

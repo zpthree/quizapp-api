@@ -1,48 +1,5 @@
 const shuffleArray = require('../utils/shuffleArray');
-
-async function appData(_, args, ctx) {
-  const questionKeys = Object.keys(ctx.res.req.questions);
-  const { theme, finalized, activeQuiz } = ctx.res.req;
-  let answeredQuestions;
-  let activeQuizId;
-  let activeQuizTitle;
-
-  if (activeQuiz) {
-    const quiz = await ctx.models.Quiz.findOne({ slug: activeQuiz });
-    activeQuizTitle = quiz.title;
-    activeQuizId = quiz.id;
-  }
-
-  const questions = await ctx.models.Question.find()
-    .where('_id')
-    .in(questionKeys)
-    .populate('quiz');
-
-  const remainingQuestions = await ctx.models.Question.find({
-    quiz: activeQuizId,
-  })
-    .where('_id')
-    .nin(questionKeys);
-
-  if (questions && questions[0]) {
-    answeredQuestions = [
-      ...questions.map(question => ({
-        ...question._doc,
-        id: question.id,
-        answerId: ctx.res.req.questions[question.id],
-      })),
-    ];
-  }
-
-  return {
-    theme,
-    activeQuiz,
-    finalized,
-    activeQuizTitle,
-    answeredQuestions,
-    remainingQuestions,
-  };
-}
+const appData = require('./AppDataQuery');
 
 // users
 async function allUsers(_, args, ctx) {
@@ -63,6 +20,20 @@ async function oneUser(_, args, ctx) {
 async function allQuizzes(_, args, ctx) {
   // TODO add error handling
   const quizzes = await ctx.models.Quiz.find({})
+    .populate('user')
+    .populate('question');
+
+  return quizzes;
+}
+
+// quizzes
+async function userQuizzes(_, args, ctx) {
+  const { username } = args;
+  // TODO add error handling
+
+  const [user] = await ctx.models.User.find({ username });
+
+  const quizzes = await ctx.models.Quiz.find({ user: user.id })
     .populate('user')
     .populate('question');
 
@@ -161,6 +132,7 @@ module.exports = {
   allUsers,
   oneUser,
   allQuizzes,
+  userQuizzes,
   oneQuiz,
   checkQuizSlug,
   allQuestions,

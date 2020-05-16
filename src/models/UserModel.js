@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
-  name: {
+  firstName: {
     type: String,
     required: true,
   },
+  lastName: String,
   email: {
     type: String,
     required: true,
@@ -19,6 +20,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  themeColor: String,
   resetToken: String,
   resetTokenExpiry: String,
   createdAt: {

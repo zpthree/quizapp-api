@@ -6,7 +6,8 @@ async function createQuiz(_, args, ctx) {
   // TODO don't allow featured images w/ explicit content
 
   // TODO get logged in user and add to quiz
-  const tempUser = '5ea362bd1d414ceff6dc7c3a';
+  // const tempUser = '5ea362bd1d414ceff6dc7c3a';
+  const user = ctx.res.req.userId;
 
   const slug = slugify(args.title, {
     remove: undefined,
@@ -22,7 +23,7 @@ async function createQuiz(_, args, ctx) {
 
   const quiz = await new ctx.models.Quiz({
     ...args,
-    user: tempUser,
+    user,
     slug,
   });
 

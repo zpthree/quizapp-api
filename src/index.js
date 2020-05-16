@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 const server = require('./server');
 const connectDB = require('./db');
 
@@ -11,8 +12,12 @@ async function startServer() {
   app.use((req, res, next) => {
     const { theme, token, activeQuiz, finalized, ...questions } = req.cookies;
 
+    if (token) {
+      const { userId } = jwt.verify(token, process.env.APP_SECRET);
+      req.userId = userId;
+    }
+
     req.theme = theme || null;
-    req.token = token || null;
     req.finalized = finalized || null;
     req.activeQuiz = activeQuiz || null;
     req.questions = questions || null;
@@ -26,7 +31,18 @@ async function startServer() {
     app,
     cors: {
       credentials: true,
-      origin: process.env.FRONTEND_URL,
+      origin: (origin, callback) => {
+        const whitelist = [
+          process.env.FRONTEND_URL,
+          process.env.FRONTEND_URL_ALT,
+        ];
+
+        if (whitelist.indexOf(origin) !== -1) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
     },
   });
 

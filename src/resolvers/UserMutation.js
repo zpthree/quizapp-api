@@ -19,37 +19,114 @@ async function createUser(_, args, ctx) {
 
   args.email = args.email.toLowerCase();
 
+  const themeColor = {
+    hsl: { h: 154.28571428571428, s: 1, l: 0.3156862745098039, a: 1 },
+    hex: '#00a15c',
+    rgb: { r: 0, g: 161, b: 92, a: 1 },
+    hsv: { h: 154.28571428571428, s: 1, v: 0.6313725490196078, a: 1 },
+    oldHue: 250,
+    source: 'hex',
+  };
+
   // create new user
   const user = await new ctx.models.User({
     ...args,
     password,
+    themeColor: JSON.stringify(themeColor),
   });
 
-  // * TODO set cookie
   const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
 
   ctx.res.cookie('token', token, {
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 * 365,
+    maxAge: 1000 * 60 * 60 * 24 * 90,
+    sameSite: 'lax',
   });
 
   return user.save();
 }
 
+async function signIn(_, args, ctx) {
+  const { email, password } = args;
+  // check for user with email
+  const user = await ctx.models.User.findOne({ email });
+
+  if (!user) {
+    throw new Error(`No user found with email ${email}.`);
+  }
+
+  // check that password is correct
+  const valid = await bcrypt.compare(password, user.password);
+
+  if (!valid) {
+    throw new Error('Invalid Password.');
+  }
+
+  // generate jwt token
+  const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
+
+  // set cookie with token
+  ctx.res.cookie('token', token, {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 90,
+    sameSite: 'lax',
+  });
+
+  return user;
+}
+
+function signOut(_, args, ctx) {
+  ctx.res.clearCookie('token');
+  return { message: 'Goodbye!' };
+}
+
+async function updateThemeColor(_, args, ctx) {
+  const { color } = args;
+  const { userId } = ctx.res.req;
+
+  if (!color) {
+    throw Error('You must provide a color to update.');
+  }
+
+  if (!userId) {
+    throw Error('You must be logged in to do this.');
+  }
+
+  const user = await ctx.models.User.findByIdAndUpdate(
+    userId,
+    { themeColor: color },
+    { new: true, runValidators: true }
+  );
+
+  return user;
+}
+
 async function updateUser(_, args, ctx) {
   let user;
   const { email, username } = args;
-  // if (!ctx.request.userId) {
-  //   throw Error(
-  //     'You do not have permission to update this user. Make sure you are signed in.'
-  //   );
-  // }
+
+  if (!ctx.res.req.userId) {
+    throw Error(
+      'You do not have permission to update this user. Make sure you are signed in.'
+    );
+  }
+
+  if (ctx.res.req.userId !== args.id) {
+    throw Error('You do not have permission to update this user.');
+  }
 
   if (!Object.keys(args).length) {
     throw Error("There's nothing to change.");
   }
 
-  await checkUnique(ctx.models.User, [{ email }, { username }]);
+  const sameEmail = await ctx.models.User.find({
+    _id: ctx.res.req.userId,
+    email,
+  });
+
+  if (!sameEmail) {
+    await checkUnique(ctx.models.User, [{ email }, { username }]);
+  }
 
   try {
     user = await ctx.models.User.findByIdAndUpdate(
@@ -72,6 +149,12 @@ async function updateUser(_, args, ctx) {
 
 async function updatePassword(_, args, ctx) {
   const user = await ctx.models.User.findOne({ username: args.username });
+
+  if (args.password.length <= 6) {
+    throw Error(
+      "Password isn't long enough. Must be longer than 6 characters."
+    );
+  }
 
   // validate passwords
   if (args.password !== args.confirmPassword) {
@@ -129,6 +212,9 @@ async function deleteUser(_, args, ctx) {
 module.exports = {
   toggleTheme,
   createUser,
+  signIn,
+  signOut,
+  updateThemeColor,
   updateUser,
   updatePassword,
   deleteUser,

@@ -2,6 +2,7 @@ type Query {
   allUsers: [User!]!
   oneUser(username: String!): User!
   allQuizzes: [Quiz!]!
+  userQuizzes(username: String!): [Quiz!]!
   oneQuiz(slug: String!): Quiz!
   checkQuizSlug(slug: String!): ResponseMessage!
   allQuestions: [Question!]!
@@ -14,18 +15,28 @@ type Mutation {
   toggleTheme(theme: String!): ResponseMessage!
   # User
   createUser(
-    name: String!
+    firstName: String!
+    lastName: String
     email: String!
     username: String!
     password: String!
   ): User!
-  updateUser(id: ID!, name: String, email: String, username: String): User!
+  signIn(email: String!, password: String!): User!
+  signOut: ResponseMessage!
+  updateUser(
+    id: ID!
+    firstName: String
+    lastName: String
+    email: String
+    username: String
+  ): User!
   updatePassword(
     username: String!
     password: String!
     confirmPassword: String!
     oldPassword: String!
   ): User!
+  updateThemeColor(color: String!): User!
   deleteUser(id: ID!): ResponseMessage!
   # Quiz
   createQuiz(
@@ -70,9 +81,20 @@ type Mutation {
 
 type User {
   id: ID!
-  name: String!
+  firstName: String!
+  lastName: String
   email: String!
   username: String!
+  permissions: Permissions
+  quizLimit: Int
+  themeColor: String
+}
+
+enum Permissions {
+  SUPERADMIN
+  ADMIN
+  AUTHOR
+  STUDENT
 }
 
 type Quiz {
