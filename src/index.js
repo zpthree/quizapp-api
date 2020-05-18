@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const server = require('./server');
 const connectDB = require('./db');
 
-async function startServer() {
+(async function startServer() {
   const app = express();
 
   app.use(cookieParser());
@@ -31,18 +31,7 @@ async function startServer() {
     app,
     cors: {
       credentials: true,
-      origin: (origin, callback) => {
-        const whitelist = [
-          process.env.FRONTEND_URL,
-          process.env.FRONTEND_URL_ALT,
-        ];
-
-        if (whitelist.indexOf(origin) !== -1) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      },
+      origin: process.env.FRONTEND_URL,
     },
   });
 
@@ -57,6 +46,4 @@ async function startServer() {
   app.get('/main.css', (req, res, next) => {
     res.sendFile(`${__dirname}/views/main.css`);
   });
-}
-
-startServer();
+})();
